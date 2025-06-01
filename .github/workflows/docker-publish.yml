@@ -29,5 +29,5 @@ jobs:
           context: .
           file: DBChatPro/Dockerfile
           push: true
-          tags: jerrybase.azurecr.io/jerrybase-dbchat-amd:0.0.2
+          tags: jerrybase.azurecr.io/jerrybase-dbchat-amd:0.0.3
 

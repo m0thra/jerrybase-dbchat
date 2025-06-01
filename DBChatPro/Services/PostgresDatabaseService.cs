@@ -52,11 +52,25 @@ namespace DBChatPro
 
         public async Task<DatabaseSchema> GenerateSchema(AIConnection conn)
         {
+            return await GenerateSchema(conn, null);
+        }
+
+
+        public async Task<DatabaseSchema> GenerateSchema(AIConnection conn, List<string>? excludedTables = null)
+        {
             var dbSchema = new DatabaseSchema() { SchemaRaw = new List<string>(), SchemaStructured = new List<TableSchema>() };
             List<KeyValuePair<string, string>> rows = new();
 
             var pairs = conn.ConnectionString.Split(";");
             var database = pairs.Where(x => x.Contains("Database")).FirstOrDefault().Split("=").Last();
+
+            // Build exclusion filter for SQL
+            string exclusionFilter = "";
+            if (excludedTables != null && excludedTables.Count > 0)
+            {
+                var excludedList = string.Join(", ", excludedTables.Select(t => $"'{t}'"));
+                exclusionFilter = $"AND table_name NOT IN ({excludedList})";
+            }
 
             string sqlQuery = $@"SELECT 
                                     table_name, 
@@ -66,6 +80,7 @@ namespace DBChatPro
                                 WHERE 
                                     table_catalog = '{database}'
                                     AND table_schema = 'public'
+                                    {exclusionFilter}
                                 ORDER BY 
                                     table_name, 
                                     column_name;";

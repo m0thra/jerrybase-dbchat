@@ -39,7 +39,28 @@ namespace DBChatPro
                 case "MYSQL":
                     return await mySqlDb.GenerateSchema(conn);
                 case "POSTGRESQL":
-                    return await postgresDb.GenerateSchema(conn);
+                    var excludedTables = new List<string>
+                    {
+                        "action_text_rich_texts",
+                        "active_storage_attachments",
+                        "active_storage_blobs",
+                        "active_storage_variant_records",
+                        "ar_internal_metadata",
+                        "audits",
+                        "friendly_id_slugs",
+                        "help_pages",
+                        "jobs",
+                        "notices",
+                        "saved_searches",
+                        "scheduled_tasks",
+                        "schema_migrations",
+                        "sessions",
+                        "term_explanations",
+                        "user_events",
+                        "users",
+                        "whats_news"
+                    };
+                    return await postgresDb.GenerateSchema(conn, excludedTables);
                 case "ORACLE":
                     return await oracleDb.GenerateSchema(conn);
             }
