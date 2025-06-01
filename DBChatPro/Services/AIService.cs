@@ -80,15 +80,28 @@ namespace DBChatPro.Services
             switch (aiService)
             {
                 case "AzureOpenAI":
-                    return new AzureOpenAIClient(
-                            new Uri(config.GetValue<string>("AZURE_OPENAI_ENDPOINT")),
-                            new DefaultAzureCredential())
-                                .AsChatClient(modelId: aiModel);
-                case "OpenAI":
-                        return new OpenAIClient(config.GetValue<string>("OPENAI_KEY"))
+                    var apiKey = config.GetValue<string>("AZURE_OPENAI_API_KEY");
+                    if (!string.IsNullOrEmpty(apiKey))
+                    {
+                        var credential = new AzureKeyCredential(apiKey);
+                        return new AzureOpenAIClient(
+                                new Uri(config.GetValue<string>("AZURE_OPENAI_ENDPOINT")),
+                                credential)
                                     .AsChatClient(modelId: aiModel);
+                    }
+                    else
+                    {
+                        var defaultCredential = new DefaultAzureCredential();
+                        return new AzureOpenAIClient(
+                                new Uri(config.GetValue<string>("AZURE_OPENAI_ENDPOINT")),
+                                defaultCredential)
+                                    .AsChatClient(modelId: aiModel);
+                    }
+                case "OpenAI":
+                    return new OpenAIClient(config.GetValue<string>("OPENAI_KEY"))
+                                .AsChatClient(modelId: aiModel);
                 case "Ollama":
-                        return new OllamaChatClient(config.GetValue<string>("OLLAMA_ENDPOINT"), aiModel);
+                    return new OllamaChatClient(config.GetValue<string>("OLLAMA_ENDPOINT"), aiModel);
                 case "GitHubModels":
                     return new ChatCompletionsClient(
                             endpoint: new Uri("https://models.inference.ai.azure.com"),
