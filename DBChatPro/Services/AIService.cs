@@ -37,6 +37,13 @@ namespace DBChatPro.Services
                 builder.AppendLine(table);
             }
 
+            builder.AppendLine("These tables model the musical performances of Jerry Garcia and the Grateful Dead.");
+            builder.AppendLine("Each performance is an Event, but studio sessions and rehearsals are also Events, the type code can be used to differentiate between them.");
+            builder.AppendLine("The term 'setlist' is used to refer to a collection of songs performed during a specific event presented in the order they were performed, not including event sets that are soundchecks.");
+            builder.AppendLine("A setlist is presented as a comma separated list of song names.");
+            builder.AppendLine("The columns selected should include event.date, act.name, and venue.name, along with any other requested fields. Do not return any columns not requested.");
+            builder.AppendLine("When you are returning columns that include event date, order by event date descending unless specifically instructed to sort some other way.");
+
             builder.AppendLine("Include column name headers in the query results.");
             builder.AppendLine("Always provide your answer in the JSON format below:");
             builder.AppendLine(@"{ ""summary"": ""your-summary"", ""query"":  ""your-query"" }");

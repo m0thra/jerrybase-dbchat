@@ -11,3 +11,10 @@ az webapp config appsettings set --name jerrybase-dbchat --resource-group jerryb
 # Access diagnostic logs
 az webapp log config --name jerrybase-dbchat --resource-group jerrybase-rg --docker-container-logging filesystem
 az webapp log tail --name jerrybase-dbchat --resource-group jerrybase-rg
+
+# creating the read only user, needs to also be able to query the infomation schema
+CREATE USER dbchat WITH PASSWORD 'some_password';
+GRANT CONNECT ON DATABASE jerrybase TO dbchat;
+GRANT USAGE ON SCHEMA public TO dbchat;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbchat;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO dbchat;
