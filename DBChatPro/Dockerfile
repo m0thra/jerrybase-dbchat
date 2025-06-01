@@ -7,7 +7,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["DBChatPro.csproj", "DBChatPro/"]
+COPY ["DBChatPro/DBChatPro.csproj", "DBChatPro/"]
 RUN dotnet restore "DBChatPro/DBChatPro.csproj"
 WORKDIR "/src/DBChatPro"
 COPY . .
