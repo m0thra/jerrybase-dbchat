@@ -54,22 +54,6 @@
                                     {
                                         <MudSelectItem Value="@("AzureOpenAI")" T="string">Azure OpenAI</MudSelectItem>
                                     }
-                                    @if (!string.IsNullOrEmpty(config.GetValue<string>("OPENAI_KEY")))
-                                    {
-                                        <MudSelectItem Value="@("OpenAI")" T="string">OpenAI</MudSelectItem>
-                                    }
-                                    @if (!string.IsNullOrEmpty(config.GetValue<string>("OLLAMA_ENDPOINT")))
-                                    {
-                                        <MudSelectItem Value="@("Ollama")" T="string">Ollama</MudSelectItem>
-                                    }
-                                    @if (!string.IsNullOrEmpty(config.GetValue<string>("GITHUB_MODELS_KEY")))
-                                    {
-                                        <MudSelectItem Value="@("GitHubModels")" T="string">GitHub Models</MudSelectItem>
-                                    }
-                                    @if (!string.IsNullOrEmpty(config.GetValue<string>("AWS:Profile")))
-                                    {
-                                        <MudSelectItem Value="@("AWSBedrock")" T="string">AWS Bedrock</MudSelectItem>
-                                    }
                                 </MudSelect>
                             </MudItem>
                             <MudItem xs="4">
@@ -262,6 +246,7 @@
 
 
 @code {
+    
     // Table styling
     private bool dense = false;
     private bool hover = true;
@@ -271,8 +256,8 @@
     // Form data
     public FormModel FmModel { get; set; } = new FormModel();
     public string ChatPrompt = "";
-    public string aiModel = "";
-    public string aiPlatform = "";
+    public string aiModel = "gpt-4.1";
+    public string aiPlatform = "AzureOpenAI";
     public string activeDatabase = "";
 
     // General UI data
@@ -307,6 +292,29 @@
     protected override async Task OnInitializedAsync()
     {
         Connections = await connectionService.GetAIConnections();
+        if (Connections.Count == 0)
+        {
+            // Read Postgres settings from config
+            var host = config.GetValue<string>("DB_HOST");
+            var database = config.GetValue<string>("DB_DATABASE");
+            var username = config.GetValue<string>("DB_USERNAME");
+            var password = config.GetValue<string>("DB_PASSWORD");
+
+            // Build the connection string
+            var connStr = $"Host={host};Port=5432;Database={database};Username={username};Password={password}";
+
+            // Create a new AIConnection for Postgres
+            var defaultConn = new AIConnection
+            {
+                Name = "Jerrybase",
+                ConnectionString = connStr,
+                DatabaseType = "POSTGRESQL",
+            };
+
+            await connectionService.AddConnection(defaultConn);
+            Connections = await connectionService.GetAIConnections();
+        }  
+
         if (Connections.Count > 0)
         {
             ActiveConnection = Connections.FirstOrDefault();
