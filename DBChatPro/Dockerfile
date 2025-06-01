@@ -9,8 +9,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["DBChatPro/DBChatPro.csproj", "DBChatPro/"]
 RUN dotnet restore "DBChatPro/DBChatPro.csproj"
-WORKDIR "/src/DBChatPro"
 COPY . .
+WORKDIR /src/DBChatPro
 RUN dotnet build "./DBChatPro.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
